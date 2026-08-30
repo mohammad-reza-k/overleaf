@@ -88,8 +88,9 @@ metrics.gauge(
   { path: 'waitForMongoAndGlobalBlobs' }
 )
 
-const port = Settings.port || Settings.internal.web.port || 3000
+const port = Settings.port || Settings.internal.web.port || 5000
 const host = Settings.internal.web.host || '127.0.0.1'
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // Called directly
   // We want to make sure that we provided a password through the environment.
@@ -99,6 +100,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 
   PlansLocator.ensurePlansAreSetupCorrectly()
 
+  
   Server.server.listen(port, host, function () {
     logger.debug(`web starting up, listening on ${host}:${port}`)
     logger.debug(`${http.globalAgent.maxSockets} sockets enabled`)
@@ -124,6 +126,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     logger.fatal({ err }, 'failed to start web module background jobs')
   }
 }
+
 
 // initialise site admin tasks
 SiteAdminHandler.initialise()

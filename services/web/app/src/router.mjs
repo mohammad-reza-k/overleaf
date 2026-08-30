@@ -1,4 +1,5 @@
 import AdminController from './Features/ServerAdmin/AdminController.js'
+import AdminPanelRouter from './Features/ServerAdmin/AdminRouter.js' 
 import ErrorController from './Features/Errors/ErrorController.js'
 import Features from './infrastructure/Features.js'
 import ProjectController from './Features/Project/ProjectController.js'
@@ -54,6 +55,7 @@ import TokenAccessController from './Features/TokenAccess/TokenAccessController.
 import TokenAccessRouter from './Features/TokenAccess/TokenAccessRouter.mjs'
 import LinkedFilesRouter from './Features/LinkedFiles/LinkedFilesRouter.mjs'
 import TemplatesRouter from './Features/Templates/TemplatesRouter.js'
+import TemplatesGalleryRouter from './Features/TemplateGallery/TemplatesRouter.js'
 import UserMembershipRouter from './Features/UserMembership/UserMembershipRouter.mjs'
 import SystemMessageController from './Features/SystemMessages/SystemMessageController.js'
 import AnalyticsRegistrationSourceMiddleware from './Features/Analytics/AnalyticsRegistrationSourceMiddleware.js'
@@ -280,7 +282,9 @@ async function initialize(webRouter, privateApiRouter, publicApiRouter) {
   ContactRouter.apply(webRouter, privateApiRouter)
   AnalyticsRouter.apply(webRouter, privateApiRouter, publicApiRouter)
   LinkedFilesRouter.apply(webRouter, privateApiRouter, publicApiRouter)
+  TemplatesGalleryRouter.apply(webRouter)
   TemplatesRouter.apply(webRouter)
+  AdminPanelRouter.apply(webRouter, privateApiRouter)
   UserMembershipRouter.apply(webRouter)
   TokenAccessRouter.apply(webRouter)
   HistoryRouter.apply(webRouter, privateApiRouter)
@@ -1125,7 +1129,7 @@ async function initialize(webRouter, privateApiRouter, publicApiRouter) {
     AuthorizationMiddleware.ensureUserIsSiteAdmin,
     AdminController.clearMessages
   )
-
+  
   privateApiRouter.get('/perfTest', (req, res) => {
     plainTextResponse(res, 'hello')
   })

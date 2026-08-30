@@ -2,9 +2,61 @@ version: "2.3"
 
 volumes:
   data:
+  template-gallery:
 
 services:
 
+  web:
+    build:
+      context: ../..
+      dockerfile: services/web/Dockerfile
+      target: base
+    image: overleaf/web:local
+    volumes:
+      - .:/overleaf/services/web
+      - ../../node_modules:/overleaf/node_modules
+      - ../../libraries:/overleaf/libraries
+      - ../../bin/shared/wait_for_it:/overleaf/bin/shared/wait_for_it
+      - ./app/template-gallery:/overleaf/services/web/app/template-gallery
+    ports:
+      - "3000:3000"
+    working_dir: /overleaf/services/web
+    environment:
+      - NODE_ENV=development
+      - SESSION_SECRET=test-secret-key-123
+      - WEB_API_USER=overleaf
+      - WEB_API_PASSWORD=testpassword123
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_URL=mongodb://mongo:27017/sharelatex
+      - PUBLIC_URL=http://localhost:3000
+      - TEMPLATE_FOLDER=/overleaf/services/web/app/template-gallery
+      - WEBPACK_URL=http://webpack:3808  # ✅ این رو اضافه کن
+    depends_on:
+      - redis
+      - mongo
+      - webpack
+    command: npm start
+    user: node
+
+  webpack:
+    build:
+      context: ../..
+      dockerfile: services/web/Dockerfile
+      target: base
+    volumes:
+      - .:/overleaf/services/web
+      - ../../node_modules:/overleaf/node_modules
+      - ../../libraries:/overleaf/libraries
+    ports:
+      - "3808:3808"
+    working_dir: /overleaf/services/web
+    environment:
+      - NODE_ENV=development
+    command: npm run webpack -- --watch
+    user: node
   test_unit:
     image: node:22.15.1
     volumes:
@@ -12,6 +64,7 @@ services:
       - ../../node_modules:/overleaf/node_modules
       - ../../libraries:/overleaf/libraries
       - ../../bin/shared/wait_for_it:/overleaf/bin/shared/wait_for_it
+      - ./app/template-gallery:/overleaf/services/web/app/template-gallery 
     working_dir: /overleaf/services/web
     env_file: docker-compose.common.env
     environment:
@@ -34,6 +87,7 @@ services:
       - ../../node_modules:/overleaf/node_modules
       - ../../libraries:/overleaf/libraries
       - ../../bin/shared/wait_for_it:/overleaf/bin/shared/wait_for_it
+      - ./app/template-gallery:/overleaf/services/web/app/template-gallery 
     user: node
     working_dir: /overleaf/services/web
     env_file: docker-compose.common.env
@@ -65,6 +119,7 @@ services:
       - .:/overleaf/services/web
       - ../../node_modules:/overleaf/node_modules
       - ../../libraries:/overleaf/libraries
+      - ./app/template-gallery:/overleaf/services/web/app/template-gallery 
     working_dir: /overleaf/services/web
     environment:
       MOCHA_GREP: ${MOCHA_GREP}

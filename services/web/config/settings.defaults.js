@@ -725,6 +725,8 @@ module.exports = {
     // them to disk here).
     dumpFolder: Path.resolve(__dirname, '../data/dumpFolder'),
     uploadFolder: Path.resolve(__dirname, '../data/uploads'),
+    templateFolder: process.env.TEMPLATE_FOLDER ||
+    '/overleaf/services/web/app/template-gallery'
   },
 
   // Automatic Snapshots
