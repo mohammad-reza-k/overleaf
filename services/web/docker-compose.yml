@@ -1,4 +1,3 @@
-version: "2.3"
 
 volumes:
   data:
@@ -22,7 +21,7 @@ services:
       - "3000:3000"
     working_dir: /overleaf/services/web
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=development  # ✅ کلید اصلی
       - SESSION_SECRET=test-secret-key-123
       - WEB_API_USER=overleaf
       - WEB_API_PASSWORD=testpassword123
@@ -33,11 +32,9 @@ services:
       - MONGO_URL=mongodb://mongo:27017/sharelatex
       - PUBLIC_URL=http://localhost:3000
       - TEMPLATE_FOLDER=/overleaf/services/web/app/template-gallery
-      - WEBPACK_URL=http://webpack:3808  # ✅ این رو اضافه کن
     depends_on:
       - redis
       - mongo
-      - webpack
     command: npm start
     user: node
 
@@ -57,6 +54,7 @@ services:
       - NODE_ENV=development
     command: npm run webpack -- --watch
     user: node
+
   test_unit:
     image: node:22.15.1
     volumes:
@@ -174,3 +172,4 @@ services:
           SAML_BASE_URL_PATH: 'http://saml/simplesaml/'
           SAML_TEST_SP_ENTITY_ID: 'overleaf-test-saml'
           SAML_TEST_SP_LOCATION: 'http://www.overleaf.test:23000/saml/callback'
+
